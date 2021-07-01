@@ -2,7 +2,7 @@ from discord import errors
 from discord.ext import commands
 import requests
 import json 
-from modules.Search import queryAnime
+from modules.Search import queryAnime, queryChar
 from utils.helpers import quick_embed
 
 
@@ -61,7 +61,22 @@ class ani(commands.Cog):
     @commands.command()
     @commands.cooldown(2, 5, commands.BucketType.user)
     async def charSearch(self, ctx,*, charName):
-        await ctx.send("monkey")
+        query =  await queryChar()
+        variables = {
+        'search': charName,
+        }
+        url = 'https://graphql.anilist.co'
+        response = requests.post(url, json={'query': query, 'variables': variables})
+        response = json.loads(response.text)
+        embedDescription = "Age: "+ str(response['data']['Character']['age']) +"\n"+ str(response['data']['Character']['description'])
+        bannerImage = response['data']['Character']['media']['edges'][0]['node']['bannerImage']
+        await quick_embed(
+            ctx,
+            description= embedDescription,
+            title = str(response['data']['Character']['name']['full']),
+            thumbnail = str(response['data']['Character']['image']['large']),
+            image_url = bannerImage,
+        )
 
 
 def setup(bot):

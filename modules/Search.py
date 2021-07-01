@@ -25,3 +25,34 @@ async def queryAnime():
     }
     }
     '''
+
+async def queryChar():
+    return '''query ($id: Int, $search: String) {
+  Character(id: $id, search: $search) {
+    id
+    age
+    gender
+    description
+    media {
+      edges {
+        id
+        node {
+          id
+          bannerImage
+        }
+      }
+    }
+    dateOfBirth {
+      year
+      month
+      day
+    }
+    name {
+      full
+    }
+    image {
+      large
+    }
+  }
+}
+    '''
